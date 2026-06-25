@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Zoo {
+
+    private static final Logger LOGGER = Logger.getLogger(Zoo.class.getName());
 
     private final List<Enclosure<? extends Animal>> enclosures;
 
@@ -19,7 +22,11 @@ public class Zoo {
     }
 
     public void addEnclosure(Enclosure<? extends Animal> enclosure) {
+        LOGGER.info("Adding enclosure: " + enclosure.getName());
+
         enclosures.add(enclosure);
+
+        LOGGER.fine("Zoo now contains " + enclosures.size() + " enclosures.");
     }
 
     public List<Enclosure<? extends Animal>> getEnclosures() {
