@@ -10,6 +10,7 @@ import zoo.enclosure.Enclosure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -58,6 +59,23 @@ public class Zoo {
         }
 
         return enclosure;
+    }
+
+    public Optional<Animal> findAnimalByName(String animalName) {
+        LOGGER.info("findAnimalByName(" + animalName + ")");
+
+        Optional<Animal> animal = enclosures.stream()
+                .flatMap(enclosure -> enclosure.findAnimalByName(animalName).stream())
+                .map(a -> (Animal) a)
+                .findFirst();
+
+        if (animal.isEmpty()) {
+            LOGGER.warning("No animal found with name: " + animalName);
+        } else {
+            LOGGER.fine("Animal found: " + animal.get().name());
+        }
+
+        return animal;
     }
 
     public List<Animal> getAllAnimals() {
