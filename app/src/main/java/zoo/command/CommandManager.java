@@ -31,6 +31,8 @@ public class CommandManager<T> {
                 LOGGER.warning(err.error().toString());
             }
         }
+
+        LOGGER.fine("Enclosure state: " + target);
     }
 
     public void undo(T target) {
@@ -53,6 +55,8 @@ public class CommandManager<T> {
                 LOGGER.warning(err.error().toString());
             }
         }
+
+        LOGGER.fine("Enclosure state: " + target);
     }
 
     public void redo(T target) {
@@ -75,5 +79,7 @@ public class CommandManager<T> {
                 LOGGER.warning(err.error().toString());
             }
         }
+
+        LOGGER.fine("Enclosure state: " + target);
     }
 }
