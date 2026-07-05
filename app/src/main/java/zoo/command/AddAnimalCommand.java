@@ -3,11 +3,7 @@ package zoo.command;
 import zoo.animal.Animal;
 import zoo.enclosure.Enclosure;
 
-import java.util.logging.Logger;
-
 public class AddAnimalCommand<T extends Animal> implements Command<Enclosure<? super T>> {
-
-    private static final Logger LOGGER = Logger.getLogger(AddAnimalCommand.class.getName());
 
     private final T animal;
     private boolean executed;
@@ -18,31 +14,31 @@ public class AddAnimalCommand<T extends Animal> implements Command<Enclosure<? s
     }
 
     @Override
-    public boolean execute(Enclosure<? super T> target) {
+    public Result<ZooError, String> execute(Enclosure<? super T> target) {
         boolean added = target.add(animal);
 
         if (!added) {
-            LOGGER.warning("Animal could not be added: " + animal.name());
+            return Result.err(ZooError.ANIMAL_ALREADY_EXISTS);
         }
 
-        executed = added;
-        return added;
+        executed = true;
+        return Result.ok("Added animal: " + animal.name());
     }
 
     @Override
-    public boolean undo(Enclosure<? super T> target) {
+    public Result<ZooError, String> undo(Enclosure<? super T> target) {
         if (!executed) {
-            LOGGER.warning("Undo not possible before command was executed.");
-            return false;
+            return Result.err(ZooError.UNDO_NOT_POSSIBLE);
         }
 
         boolean removed = target.remove(animal);
 
         if (!removed) {
-            LOGGER.warning("Animal could not be removed during undo: " + animal.name());
+            return Result.err(ZooError.ANIMAL_NOT_FOUND);
         }
 
-        return removed;
+        executed = false;
+        return Result.ok("Undo add animal: " + animal.name());
     }
 
     @Override

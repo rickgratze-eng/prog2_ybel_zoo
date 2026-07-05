@@ -2,9 +2,9 @@ package zoo.command;
 
 public interface Command<T> {
 
-    boolean execute(T target);
+    Result<ZooError, String> execute(T target);
 
-    boolean undo(T target);
+    Result<ZooError, String> undo(T target);
 
     String description();
 }

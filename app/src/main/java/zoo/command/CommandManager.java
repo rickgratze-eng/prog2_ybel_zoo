@@ -16,64 +16,64 @@ public class CommandManager<T> {
         this.redoStack = new ArrayDeque<>();
     }
 
-    public boolean executeCommand(Command<T> command, T target) {
+    public void executeCommand(Command<T> command, T target) {
         LOGGER.info("executeCommand: " + command.description());
 
-        boolean success = command.execute(target);
+        Result<ZooError, String> result = command.execute(target);
 
-        if (success) {
-            undoStack.push(command);
-            redoStack.clear();
-            LOGGER.fine("Command executed. Undo stack: " + undoStack.size()
-                    + ", redo stack: " + redoStack.size());
-        } else {
-            LOGGER.warning("Command failed: " + command.description());
+        switch (result) {
+            case Result.Ok<ZooError, String> ok -> {
+                LOGGER.info(ok.value());
+                undoStack.push(command);
+                redoStack.clear();
+            }
+            case Result.Err<ZooError, String> err -> {
+                LOGGER.warning(err.error().toString());
+            }
         }
-
-        return success;
     }
 
-    public boolean undo(T target) {
+    public void undo(T target) {
         LOGGER.info("undo()");
 
         if (undoStack.isEmpty()) {
-            LOGGER.warning("Undo not possible: undo stack is empty.");
-            return false;
+            LOGGER.warning(ZooError.UNDO_NOT_POSSIBLE.toString());
+            return;
         }
 
         Command<T> command = undoStack.pop();
-        boolean success = command.undo(target);
+        Result<ZooError, String> result = command.undo(target);
 
-        if (success) {
-            redoStack.push(command);
-            LOGGER.fine("Undo successful. Undo stack: " + undoStack.size()
-                    + ", redo stack: " + redoStack.size());
-        } else {
-            LOGGER.warning("Undo failed: " + command.description());
+        switch (result) {
+            case Result.Ok<ZooError, String> ok -> {
+                LOGGER.info(ok.value());
+                redoStack.push(command);
+            }
+            case Result.Err<ZooError, String> err -> {
+                LOGGER.warning(err.error().toString());
+            }
         }
-
-        return success;
     }
 
-    public boolean redo(T target) {
+    public void redo(T target) {
         LOGGER.info("redo()");
 
         if (redoStack.isEmpty()) {
-            LOGGER.warning("Redo not possible: redo stack is empty.");
-            return false;
+            LOGGER.warning(ZooError.REDO_NOT_POSSIBLE.toString());
+            return;
         }
 
         Command<T> command = redoStack.pop();
-        boolean success = command.execute(target);
+        Result<ZooError, String> result = command.execute(target);
 
-        if (success) {
-            undoStack.push(command);
-            LOGGER.fine("Redo successful. Undo stack: " + undoStack.size()
-                    + ", redo stack: " + redoStack.size());
-        } else {
-            LOGGER.warning("Redo failed: " + command.description());
+        switch (result) {
+            case Result.Ok<ZooError, String> ok -> {
+                LOGGER.info(ok.value());
+                undoStack.push(command);
+            }
+            case Result.Err<ZooError, String> err -> {
+                LOGGER.warning(err.error().toString());
+            }
         }
-
-        return success;
     }
 }
