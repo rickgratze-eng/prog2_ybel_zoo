@@ -1,44 +1,42 @@
 # prog2_ybel_zoo
 
-## Blatt 07 – Reflexion
+## Blatt 08 Reflexion
 
-### Generics
+### Optional
 
-**Wo helfen Ihnen die Generics im Zoo-Szenario, Fehler bereits zur Compile-Zeit zu vermeiden?**
+**Warum ist Optional hier sinnvoll?**
 
-- Generics verhindern falsche Typkombinationen bereits zur Compile-Zeit.
-- Dadurch können Gehege nur passende Tierarten aufnehmen.
+- Optional macht deutlich, dass eine Suche kein Ergebnis liefern muss.
+- Dadurch werden `null`-Rückgaben vermieden.
+- Der Aufrufer muss den Fall eines fehlenden Ergebnisses bewusst behandeln.
 
-**Beispiel**
+**Warum Optional<T> in Enclosure und Optional<Animal> in Zoo?**
 
-- Ein `Aquarium<Trout>` kann keine `Dog`-Objekte aufnehmen.
-- Ein `CatHouse<Lion>` kann keine `Dog`-Objekte aufnehmen.
-
----
-
-### Logging
-
-**Warum ist Logging sinnvoller als println?**
-
-- Unterschiedliche Log-Level können verwendet werden.
-- Programmabläufe lassen sich besser nachvollziehen.
-- Logging kann gezielt aktiviert oder deaktiviert werden.
-
-**Wann werden welche Log-Level verwendet?**
-
-- **INFO:** Aufruf einer öffentlichen Methode.
-- **WARNING:** Wenn ein Gehege oder Tier nicht gefunden wurde.
-- **SEVERE:** Bei schwerwiegenden Fehlern oder inkonsistenten Zuständen.
+- `Enclosure<T>` kennt den konkreten Tier-Typ und kann daher `Optional<T>` zurückgeben.
+- Der Zoo enthält verschiedene Gehegetypen, deshalb wird `Optional<Animal>` verwendet.
 
 ---
 
-### Streams
+### Command Pattern
 
-**Wo haben Streams geholfen?**
+**Welche Vorteile bietet das Command Pattern?**
 
-- Streams haben das Filtern und Sammeln der Tiere vereinfacht.
-- Methoden wie `filter`, `map`, `flatMap` und `groupingBy` machen den Code kompakter.
+- Aktionen werden als eigene Objekte modelliert.
+- Undo und Redo lassen sich einfach umsetzen.
+- Neue Befehle können leicht ergänzt werden.
 
-**Wo wurden Streams unübersichtlich?**
+---
 
-- Längere Stream-Ketten sind teilweise schwerer zu lesen als klassische Schleifen.
+### Result<E,R>
+
+**Warum Result statt Exceptions?**
+
+- Mögliche Fehler sind bereits im Rückgabetyp sichtbar.
+- Fehler müssen vom Aufrufer behandelt werden.
+- Es wird kein Exception-Handling benötigt.
+
+**Welche Rolle spielt der CommandManager?**
+
+- Er führt Commands aus.
+- Er verwaltet Undo und Redo.
+- Er übernimmt das Logging zentral.
